@@ -1,4 +1,5 @@
 import React from 'react';
+import { TransactionCard } from '../../components/TransactionCard';
 import {
     Container,
     Header,
@@ -8,7 +9,8 @@ import {
     User,
     UserGreeting,
     UserName,
-    FeatherIcons
+    FeatherIcons,
+    TransactionCards
 } from './styles';
 
 export function Dashboard() {
@@ -34,6 +36,12 @@ export function Dashboard() {
                     <FeatherIcons name="power" />
                 </UserWrapper>
             </Header>
+            
+            <TransactionCards>
+                <TransactionCard />
+                <TransactionCard />
+                <TransactionCard />
+            </TransactionCards>
         </Container>
     )
 }
