@@ -4,7 +4,8 @@ import { ThemeProvider } from 'styled-components';
 
 
 import theme from './src/global/theme';
-import { Dashboard } from './src/screens/Dashboard';
+/* import { Dashboard } from './src/screens/Dashboard'; */
+import { Registro } from './src/screens/Registro';
 
 import {
   useFonts,
@@ -26,7 +27,7 @@ export default function App() {
 
   return (   
     <ThemeProvider theme={theme}>
-      <Dashboard />
+      <Registro />
     </ThemeProvider>
   );
 }

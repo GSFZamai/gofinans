@@ -1,25 +1,56 @@
 import React from 'react';
 import {
     Container,
-    Header,
-    Transaction,
+    Title,
+    Amount,
+    Footer,
+    Category,
     Icon,
-    Content,
-    Value,
-    LastTransaction,
+    CategoryName,
+    Date
 } from './styles';
 
-export function TransactionCard() {
+
+interface Category {
+    icon: string;
+    name: string;
+}
+
+export interface TransactionData {
+    type: 'income' | 'outcome';
+    title: string;
+    amount: string;
+    category: Category;
+    date: string;
+}
+
+interface TransactionProps {
+    data: TransactionData;
+}
+
+export function TransactionCard({data}: TransactionProps) {
     return(
         <Container>
-            <Header>
-                <Transaction>Entrada</Transaction>
-                <Icon name="arrow-up-circle"></Icon>
-            </Header>
-            <Content>
-                <Value>R$ 17.400,00</Value>
-                <LastTransaction>Última entrada dia 13 de abril</LastTransaction>
-            </Content>
+            <Title>
+                {data.title}
+            </Title>
+
+            <Amount type={data.type}>
+                {data.type === "outcome" && '- '}
+                {data.amount}
+            </Amount>
+
+            <Footer>
+                <Category>
+                    <Icon name={data.category.icon} />
+                    <CategoryName>
+                        {data.category.name}
+                    </CategoryName>
+                </Category>
+                <Date>
+                    {data.date}
+                </Date>
+            </Footer>
         </Container>
     )
 }

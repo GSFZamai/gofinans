@@ -1,45 +1,57 @@
 import styled from 'styled-components/native';
-import { Feather } from '@expo/vector-icons';
+import { Feather } from "@expo/vector-icons";
 import { RFValue } from 'react-native-responsive-fontsize';
 
+interface TransactionType {
+    type: 'income' | 'outcome';
+}
+
 export const Container = styled.View`
-    background: ${({ theme }) => theme.colors.shape};
-    width: ${RFValue(300)}px;
-    padding: 19px 23px;
-    padding-bottom: ${RFValue(42)}px;
+    background-color: ${({ theme }) => theme.colors.shape};
     border-radius: 5px;
-    margin-right: 16px;
+    margin-top: 16px;
+    padding: 17px 24px;
 `;
 
-export const Header = styled.View`
-    width: 100%;
-    flex-direction: row;
-    justify-content: space-between;
-`;
-
-export const Transaction = styled.Text`
+export const Title = styled.Text`
     font-family: ${({ theme }) => theme.fonts.regular};
-    color: ${({ theme }) => theme.colors.default};
     font-size: ${RFValue(14)}px;
 `;
 
+export const Amount = styled.Text<TransactionType>`
+    font-family: ${({ theme }) => theme.fonts.regular};
+    color: ${({ theme, type }) => 
+      type === 'income' ? theme.colors.success : theme.colors.attention
+    };
+    font-size: ${RFValue(20)}px;
+    margin-top: 2px;
+`;
+
+export const Footer = styled.View`
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 19px;
+    align-items: center;
+`;
+
+export const Category = styled.View`
+    flex-direction: row;
+    align-items: center;
+`;
+
 export const Icon = styled(Feather)`
-    color: ${({ theme }) => theme.colors.success};
-    font-size: ${RFValue(40)}px;
+    color: ${({ theme }) => theme.colors.text};
+    font-size: ${RFValue(20)}px;
 `;
 
-export const Content = styled.View`
-    margin-top: 50px;
-`;
-
-export const Value = styled.Text`
-    font-family: ${({ theme }) => theme.fonts.medium};
-    color: ${({ theme }) => theme.colors.default};
-    font-size: ${RFValue(32)}px;
-`;
-
-export const LastTransaction = styled.Text`
+export const CategoryName = styled.Text`
     font-family: ${({ theme }) => theme.fonts.regular};
     color: ${({ theme }) => theme.colors.text};
-    font-size: ${RFValue(12)}px;
+    font-size: ${RFValue(14)}px;
+    margin-left: 12px;
+`;
+
+export const Date = styled.Text`
+    color: ${({ theme }) => theme.colors.text};
+    font-size: ${RFValue(14)}px;
 `;

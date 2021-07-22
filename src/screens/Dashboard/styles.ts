@@ -1,6 +1,11 @@
 import styled from "styled-components/native";
 import {Feather} from '@expo/vector-icons'
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
+import { getStatusBarHeight } from 'react-native-iphone-x-helper';
+import { FlatList } from "react-native";
+
+import {TransactionCardData} from '.'
+
 
 export const Container = styled.View`
     flex: 1;
@@ -11,8 +16,8 @@ export const Header = styled.View`
     width: 100%;
     height: ${RFPercentage(42)}px;
     background-color: ${({theme}) => theme.colors.primary};
-    justify-content: center;
-`
+    justify-content: flex-start;
+`;
 
 export const UserWrapper = styled.View`
     width: 100%;
@@ -20,6 +25,7 @@ export const UserWrapper = styled.View`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    margin-top: ${getStatusBarHeight() + RFValue(28)}px;
 `;
 
 export const UserInfo = styled.View`
@@ -52,10 +58,33 @@ export const UserName = styled.Text`
 export const FeatherIcons = styled(Feather)`
     font-size: ${RFValue(24)}px;
     color: ${({theme}) => theme.colors.secondary};
-`
+`;
 
-export const TransactionCards = styled.ScrollView.attrs({
+export const ResumeCards = styled.ScrollView.attrs({
     horizontal: true,
-    showsHorizontalScrollIndicator: true,
-    contentContainerStyle: { paddingHorizontal: 24}
-})``;
+    showsHorizontalScrollIndicator: false,
+    contentContainerStyle: { paddingHorizontal: 24},
+})`
+    position: absolute;
+    margin-top: ${RFPercentage(20)}px;
+`;
+
+export const Transactions = styled.View`
+    flex: 1;
+    padding: 0 24px;
+    margin-top: ${RFPercentage(16)}px;
+`;
+
+export const Title = styled.Text`
+    font-family: ${({theme}) => theme.fonts.regular};
+    font-size: ${RFValue(18)}px;
+`;
+
+export const TransactionsList = styled(
+    FlatList as new () => FlatList<TransactionCardData>
+).attrs({
+    showsVerticalScrollIndicator: false,
+    contentContainerStyle: {paddingBottom: 20}
+})`
+
+`;
