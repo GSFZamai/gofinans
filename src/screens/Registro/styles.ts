@@ -1,6 +1,7 @@
 import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
 
+
 export const Container = styled.View`
     flex: 1;
     background-color: ${({theme}) => theme.colors.background};
@@ -37,5 +38,5 @@ export const TransactionTypeContainer = styled.View`
     flex-direction: row;
     width: 100%;
     justify-content: space-between;
-    margin: 16px 0;
+    margin: 8px 0 16px 0;
 `;

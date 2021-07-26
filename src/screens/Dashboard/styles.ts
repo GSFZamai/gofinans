@@ -1,4 +1,5 @@
 import styled from "styled-components/native";
+import { BorderlessButton } from 'react-native-gesture-handler' 
 import {Feather} from '@expo/vector-icons'
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
@@ -54,6 +55,8 @@ export const UserName = styled.Text`
     font-family: ${({theme}) => theme.fonts.bold};
     color: ${({theme}) => theme.colors.shape};
 `;
+
+export const Button = styled(BorderlessButton)``;
 
 export const FeatherIcons = styled(Feather)`
     font-size: ${RFValue(24)}px;

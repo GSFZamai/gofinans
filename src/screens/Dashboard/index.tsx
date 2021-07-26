@@ -11,6 +11,7 @@ import {
     User,
     UserGreeting,
     UserName,
+    Button,
     FeatherIcons,
     ResumeCards,
     Transactions,
@@ -77,7 +78,9 @@ export function Dashboard() {
                             </UserName>
                         </User>
                     </UserInfo>
-                    <FeatherIcons name="power" />
+                    <Button>
+                     <FeatherIcons name="power" />
+                    </Button>
                 </UserWrapper>
             </Header>
             
