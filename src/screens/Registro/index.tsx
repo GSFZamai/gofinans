@@ -1,9 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import { Keyboard, Modal, TouchableWithoutFeedback } from 'react-native';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import uuid from 'react-native-uuid';
+import { Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/core';
 
 import { Button } from '../../components/Form/Button';
 import { CategorySelect } from '../../screens/CategorySelect';
@@ -18,7 +21,6 @@ import {
     TransactionTypeContainer
 } from './styles';
 import { FormControlled } from '../../components/Form/FormControlled';
-import { Alert } from 'react-native';
 
 interface FormData {
     name: string;
@@ -47,10 +49,12 @@ export function Registro() {
     const {
         control,
         handleSubmit,
+        reset,
         formState: { errors }
     } = useForm({
         resolver: yupResolver(scheme)
     })
+    const navigate = useNavigation();
 
     function handleTransactionTypeSelect(type: string) {
         setTransactionType(type);
@@ -64,6 +68,10 @@ export function Registro() {
         setIsModalOpen(false)
     }
 
+    async function resetStorage() {
+        await AsyncStorage.removeItem(dataKey)
+    }
+
     async function handleFormSubmit(form: FormData) {
         if (!transactionType) {
             return Alert.alert('Selecione um tipo de transação');
@@ -73,31 +81,41 @@ export function Registro() {
             return Alert.alert('Selecione uma categoria!');
         }
 
-        const data = {
+        const newTransaction = {
+            id: String(uuid.v4()),
             name: form.name,
             value: form.value,
             category: category.key,
-            transaction: transactionType
+            transaction: transactionType,
+            date: new Date()
         }
 
 
         try {
-            await AsyncStorage.setItem(dataKey, JSON.stringify(data));
+            const storedTransactions =  await AsyncStorage.getItem(dataKey);
+            const parsedStoredTransactions = storedTransactions ? JSON.parse(storedTransactions) : []
+            const newTransactionsObject = [
+                newTransaction,
+                ...parsedStoredTransactions              
+            ];
+
+            await AsyncStorage.setItem(dataKey, JSON.stringify(newTransactionsObject));
+
+            reset();
+            setTransactionType('');
+            setCategory({
+                name: 'Categoria',
+                key: ''
+            });
+
+            navigate.navigate('Extrato');
+
         }catch (error) {
             console.log(error);
             Alert.alert('Não foi possivel realizar o registro no momento');
         }
 
     }
-
-    useEffect(() => {
-        async function loadData() {
-            const data = await AsyncStorage.getItem(dataKey)
-            console.log(data);
-        }
-
-        loadData();
-    }, [])
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

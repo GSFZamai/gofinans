@@ -91,3 +91,19 @@ export const TransactionsList = styled(
 })`
 
 `;
+
+export const LoaderContainer = styled.View`
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+`
+
+export const WarningContainer = styled.View`
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+`;
+
+export const Warning = styled.Text`
+
+`;
