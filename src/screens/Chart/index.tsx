@@ -9,6 +9,8 @@ import { addMonths, subMonths, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { ActivityIndicator } from 'react-native';
 
+import { useAuth } from '../../hooks/auth';
+import { categories } from '../../utils/categories';
 import { HistoryCard } from '../../components/HistoryCard';
 import {
     Container,
@@ -25,7 +27,6 @@ import {
     Warning,
     WarningContainer
 } from './styles';
-import { categories } from '../../utils/categories';
 
 
 interface TransactionsProps {
@@ -50,6 +51,7 @@ export function Chart() {
     const [isLoading, setIsLoading] = useState(true);
     const [listData, setListData] = useState<OutcomeHistoryProps[]>([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
+    const {user} = useAuth();
     const category = categories;
     const theme = useTheme();
 
@@ -66,7 +68,7 @@ export function Chart() {
     }
 
     async function loadData() {
-        const dataKey = '@gofinances:transactions';
+        const dataKey = `@gofinances:transactions_user:${user.id}`;
         const rawData = await AsyncStorage.getItem(dataKey);
         const transactions: TransactionsProps[] = rawData ? JSON.parse(rawData!) : []
         const outcomeTransactions = transactions.filter(item => (

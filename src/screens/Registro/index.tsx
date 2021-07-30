@@ -8,6 +8,7 @@ import uuid from 'react-native-uuid';
 import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 
+import { useAuth } from '../../hooks/auth';
 import { Button } from '../../components/Form/Button';
 import { CategorySelect } from '../../screens/CategorySelect';
 import { CategorySelectField } from '../../components/Form/CategorySelectField';
@@ -39,7 +40,8 @@ const scheme = yup.object().shape({
 })
 
 export function Registro() {
-    const dataKey = '@gofinances:transactions'
+    const { user } = useAuth(); 
+    const dataKey = `@gofinances:transactions_user:${user.id}`
     const [transactionType, setTransactionType] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [category, setCategory] = useState({

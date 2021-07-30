@@ -26,6 +26,7 @@ import {
     Warning
 } from './styles';
 import { useCallback } from 'react';
+import { useAuth } from '../../hooks/auth';
 
 export interface TransactionCardData extends TransactionData {
     id: string;
@@ -47,15 +48,16 @@ export function Dashboard() {
     const [data, setData] = useState<TransactionCardData[]>([]);
     const [resumeData, setResumeData] = useState<ResumeProps>({} as ResumeProps);
     const [resetCounter, setResetCounter] = useState(0);
-
+    
+    const { user, logOut } = useAuth();
     const theme = useTheme();
 
     function resetData() {
 
 
         if (resetCounter >= 20) {
-            const dataKey = '@gofinances:transactions';
-            AsyncStorage.removeItem(dataKey);
+            const resetDataKeys = [`@gofinances:transactions_user:${user.id}`, '@gofinances:user'];
+            AsyncStorage.multiRemove(resetDataKeys);
             console.log('Feito!')
             setResetCounter(0);
             return;
@@ -70,35 +72,71 @@ export function Dashboard() {
 
     function getLastTransactions(
         transactions: TransactionCardData[],
-        transactionType: 'income' | 'outcome'
+        transactionType: 'income' | 'outcome' | 'resume'
     ): string {
+        const auxiliar = {
+            income: 'entrada',
+            outcome: 'saída',
+            resume: ''
+        }
 
-        const lastTransactionTimestamp = Math.max.apply(Math,
-            transactions
-                .filter(
-                    item => item.transaction === transactionType
-                )
-                .map(
-                    transaction => new Date(transaction.date).getTime()
-                )
-        );
+        let lastTransactionMessage = `Não existem transações de ${auxiliar[transactionType]} para o período.`
 
-        const lastTransactionDate = Intl.DateTimeFormat('pt-BR', {
-            day: '2-digit',
-            month: 'long',
-        }).format(new Date(lastTransactionTimestamp))
+        if (transactionType === 'resume') {
+            try{
 
+                const lastTransactionTimestamp = Math.max.apply(Math,
+                    transactions
+                        .map(
+                            transaction => new Date(transaction.date).getTime()
+                        )
+                );
+    
+                const lastTransactionDate = Intl.DateTimeFormat('pt-BR', {
+                    day: '2-digit',
+                    month: 'long',
+                }).format(new Date(lastTransactionTimestamp))
+    
+                lastTransactionMessage = `Última transação realizada dia ${lastTransactionDate}.`
+    
+            } catch (error) {
+                console.log(`Sem transações de ${auxiliar[transactionType]}`);
+            }
 
-        return lastTransactionDate;
+            return lastTransactionMessage;
+        }
+
+        try{
+
+            const lastTransactionTimestamp = Math.max.apply(Math,
+                transactions
+                    .filter(
+                        item => item.transaction === transactionType
+                    )
+                    .map(
+                        transaction => new Date(transaction.date).getTime()
+                    )
+            );
+
+            const lastTransactionDate = Intl.DateTimeFormat('pt-BR', {
+                day: '2-digit',
+                month: 'long',
+            }).format(new Date(lastTransactionTimestamp))
+
+            lastTransactionMessage = `Última ${auxiliar[transactionType]} dia ${lastTransactionDate}`
+
+        } catch (error) {
+            console.log(`Sem transações de ${auxiliar[transactionType]}`);
+        }
+
+        return lastTransactionMessage;
 
     }
 
     async function loadData() {
-        const dataKey = '@gofinances:transactions';
+        const dataKey = `@gofinances:transactions_user:${user.id}`;
         const response = await AsyncStorage.getItem(dataKey);
         const storedData = response ? JSON.parse(response!) : [];
-
-        console.log(storedData);
 
         if (storedData.length === 0) {
             setData(storedData);
@@ -152,28 +190,24 @@ export function Dashboard() {
                     style: 'currency',
                     currency: 'BRL'
                 }),
-                lastTransaction: `Última entrada dia ${getLastTransactions(storedData, 'income')}`
+                lastTransaction: getLastTransactions(storedData, 'income')
             },
             outcome: {
                 sum: outcomes.toLocaleString('pt-BR', {
                     style: 'currency',
                     currency: 'BRL'
                 }),
-                lastTransaction: `Última saída dia ${getLastTransactions(storedData, 'income')}`
+                lastTransaction: getLastTransactions(storedData, 'outcome')
             },
             total: {
                 sum: total,
-                lastTransaction: `01 à ${getLastTransactions(storedData, 'income')}`
+                lastTransaction: getLastTransactions(storedData, 'resume')
             },
         });
 
         setData(fomatedData);
         setIsLoading(false);
     }
-
-    useEffect(() => {
-        loadData();
-    }, []);
 
     useFocusEffect(useCallback(() => {
         loadData()
@@ -187,7 +221,7 @@ export function Dashboard() {
                         <Button onPress={resetData}>
                             <Photo
                                 source={{
-                                    uri: 'https://avatars.githubusercontent.com/u/47357785?v=4'
+                                    uri: user.photo
                                 }}
                             />
                         </Button>
@@ -196,11 +230,11 @@ export function Dashboard() {
                                 Olá,
                             </UserGreeting>
                             <UserName>
-                                Gabriel
+                                {user.name}
                             </UserName>
                         </User>
                     </UserInfo>
-                    <Button>
+                    <Button onPress={logOut}>
                         <FeatherIcons name="power" />
                     </Button>
                 </UserWrapper>
